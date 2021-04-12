@@ -1,6 +1,7 @@
 package me.totalfreedom.tfguilds;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import me.totalfreedom.tfguilds.bridge.TFMBridge;
 import me.totalfreedom.tfguilds.command.GuildChatCommand;
@@ -27,7 +28,7 @@ public final class TFGuilds extends JavaPlugin
 
     // TEMP FIX UNTIL REWRITE
     public Map<String, Guild> guilds;
-    public Map<String, GuildWarp> warps;
+    public Map<String, List<GuildWarp>> warps;
 
     private static TFGuilds plugin;
 

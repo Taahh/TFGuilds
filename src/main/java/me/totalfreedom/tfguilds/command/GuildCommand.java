@@ -212,7 +212,7 @@ public class GuildCommand extends Common implements CommandExecutor, TabComplete
                 {
                     if (sender instanceof Player)
                     {
-                        return Guild.getGuildWarps();
+                        return Guild.getGuild((Player)sender).getGuildWarpNames();
                     }
                 }
             }

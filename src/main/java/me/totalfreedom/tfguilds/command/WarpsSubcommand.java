@@ -29,7 +29,7 @@ public class WarpsSubcommand extends Common implements CommandExecutor
             return true;
         }
 
-        List<String> warps = Guild.getGuildWarps();
+        List<String> warps = guild.getGuildWarpNames();
         sender.sendMessage(tl(PREFIX + "%s%Guild warps (%p%" + warps.size() + " total%s%)\n%p%" + StringUtils.join(warps, "%s%,%p% ")));
         return true;
     }

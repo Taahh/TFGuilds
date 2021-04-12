@@ -296,22 +296,27 @@ public class Guild
         return g;
     }
 
-    public static List<String> getGuildWarps()
+    public List<GuildWarp> getGuildWarps()
     {
-        List<String> warps = new ArrayList<>();
-        for (GuildWarp warp : plugin.warps.values())
-        {
-            warps.add(warp.getWarpName());
-        }
-        return warps;
+        return plugin.warps.get(identifier);
+    }
+
+    public List<String> getGuildWarpNames()
+    {
+        List<String> names = new ArrayList<>();
+        getGuildWarps().forEach(warp ->
+                names.add(warp.getWarpName()));
+        return names;
     }
 
     public GuildWarp getWarp(String warpName)
     {
-        GuildWarp warp = plugin.warps.get(identifier);
-        if (warp != null && warp.getWarpName().equalsIgnoreCase(warpName))
+        for (GuildWarp warp : getGuildWarps())
         {
-            return warp;
+            if (warp.getWarpName().equalsIgnoreCase(warpName))
+            {
+                return warp;
+            }
         }
         return null;
     }
@@ -428,6 +433,13 @@ public class Guild
 
     public boolean warpExists(String warpName)
     {
-        return plugin.warpData.exists(identifier, warpName);
+        for (GuildWarp warp : plugin.warps.get(identifier))
+        {
+            if (warp.getWarpName().equalsIgnoreCase(warpName))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

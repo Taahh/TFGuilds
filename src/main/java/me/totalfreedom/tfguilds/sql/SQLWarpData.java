@@ -22,12 +22,6 @@ public class SQLWarpData
     private final String DELETE = "DELETE FROM `" + TABLE_NAME + "` WHERE identifier=? AND warp_name=?";
     private final String INSERT = "INSERT INTO `" + TABLE_NAME + "` (`identifier`, `warp_name`, `x`, `y`, `z`, `world`) VALUES (?, ?, ?, ?, ?, ?);";
 
-    public boolean exists(String identifier, String warpName)
-    {
-        GuildWarp warp = plugin.warps.get(identifier);
-        return warp != null && warp.getWarpName().equalsIgnoreCase(warpName);
-    }
-
     public GuildWarp get(String identifier, String warpName)
     {
         Connection connection = plugin.sql.getConnection();
@@ -60,7 +54,9 @@ public class SQLWarpData
             while (set.next())
             {
                 String identifier = set.getString("identifier");
-                plugin.warps.put(identifier, get(identifier, set.getString("warp_name")));
+                List<GuildWarp> warps = plugin.warps.computeIfAbsent(identifier, $ -> new ArrayList<>());
+                warps.add(get(identifier, set.getString("warp_name")));
+                plugin.warps.put(identifier, warps);
             }
         }
         catch (SQLException ex)
@@ -84,7 +80,9 @@ public class SQLWarpData
             statement.execute();
             GuildWarp warp = new GuildWarp(identifier, warpName, player.getLocation().getX(), player.getLocation().getY(),
                     player.getLocation().getZ(), player.getWorld());
-            plugin.warps.put(identifier, warp);
+            List<GuildWarp> warps = plugin.warps.computeIfAbsent(identifier, $ -> new ArrayList<>());
+            warps.add(warp);
+            plugin.warps.put(identifier, warps);
             return warp;
         }
         catch (SQLException ex)
@@ -107,7 +105,9 @@ public class SQLWarpData
             statement.setDouble(5, warp.getZ());
             statement.setInt(6, plugin.worldData.getWorldID(warp.getWorld()));
             statement.execute();
-            plugin.warps.put(warp.getIguild(), warp);
+            List<GuildWarp> warps = plugin.warps.get(warp.getIguild());
+            warps.add(warp);
+            plugin.warps.put(warp.getIguild(), warps);
         }
         catch (SQLException ex)
         {
@@ -124,7 +124,10 @@ public class SQLWarpData
             statement.setString(1, warp.getIguild());
             statement.setString(2, warp.getWarpName());
             statement.execute();
-            plugin.warps.remove(warp.getIguild());
+            String identifier = warp.getIguild();
+            List<GuildWarp> warps = plugin.warps.get(identifier);
+            warps.remove(warp);
+            plugin.warps.put(identifier, warps);
         }
         catch (SQLException ex)
         {
